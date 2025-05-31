@@ -7,31 +7,16 @@ import {
 } from "react-icons/tb";
 
 export const navData = {
+  brand: {
+    title: "QuizCraft",
+    href: "/",
+    icon: TbDashboard,
+  },
   main: [
     {
-      title: "Dashboard",
-      href: "/dashboard",
-      icon: TbDashboard,
-    },
-    {
-      title: "Market",
-      href: "/market",
+      title: "Quizzes",
+      href: "/quiz",
       icon: TbChartBar,
-    },
-    {
-      title: "Analytics",
-      href: "/analytics",
-      icon: TbReportAnalytics,
-    },
-    {
-      title: "Transactions",
-      href: "/transactions",
-      icon: TbCashRegister,
-    },
-    {
-      title: "Achievements",
-      href: "/achievements",
-      icon: TbAward,
     },
   ],
 };

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const OptionSchema = z.object({
   optionId: z.string(),
@@ -8,10 +8,17 @@ export const OptionSchema = z.object({
 export const QuestionSchema = z.object({
   id: z.string(),
   questionText: z.string(),
-  questionType: z.enum(['multiple-choice', 'true-false', 'short-answer', 'multiple-choice-multiple-answer']),
+  questionType: z.enum([
+    "multiple-choice",
+    "true-false",
+    "short-answer",
+    "multiple-choice-multiple-answer",
+  ]),
+  category: z.string(),
   points: z.number(),
   options: z.array(OptionSchema).optional(),
   correctAnswer: z.union([z.string(), z.array(z.string())]),
+  acceptableAnswers: z.array(z.string()).optional(),
   explanation: z.string(),
   imageURL: z.string().optional(),
 });

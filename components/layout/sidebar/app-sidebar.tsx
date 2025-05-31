@@ -41,9 +41,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               isActive={pathname === "/"}
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <Link href="/">
+              <Link href={navData.brand.href} className="flex items-center gap-2">
                 <TbInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">SmartStock</span>
+                <span className="text-base font-semibold">{navData.brand.title}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
