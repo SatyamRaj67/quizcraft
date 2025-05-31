@@ -1,0 +1,211 @@
+{
+  "quizTitle": "Science & Mathematics Challenge",
+  "quizDescription": "Test your knowledge in Physics, Chemistry, and Mathematics.",
+  "difficulty": "Medium",
+  "category": "Science & Maths",
+  "tags": ["Physics", "Chemistry", "Mathematics", "Education", "STEM"],
+  "timeLimitMinutes": 30,
+  "passingScorePercentage": 70,
+  "questions": [
+    {
+      "id": "PHY001",
+      "questionText": "Which of Newton's laws of motion is also known as the law of inertia?",
+      "questionType": "multiple-choice",
+      "category": "Physics",
+      "points": 10,
+      "options": [
+        { "optionId": "A", "text": "First Law" },
+        { "optionId": "B", "text": "Second Law" },
+        { "optionId": "C", "text": "Third Law" },
+        { "optionId": "D", "text": "Fourth Law" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Newton's First Law states that an object will remain at rest or in uniform motion in a straight line unless acted upon by an external force."
+    },
+    {
+      "id": "PHY002",
+      "questionText": "The speed of light in a vacuum is approximately 300,000 kilometers per second.",
+      "questionType": "true-false",
+      "category": "Physics",
+      "points": 5,
+      "options": [
+        { "optionId": "A", "text": "True" },
+        { "optionId": "B", "text": "False" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The speed of light in a vacuum (c) is a fundamental physical constant, precisely 299,792,458 meters per second."
+    },
+    {
+      "id": "PHY003",
+      "questionText": "What is the SI unit of force?",
+      "questionType": "short-answer",
+      "category": "Physics",
+      "points": 10,
+      "correctAnswer": "Newton",
+      "acceptableAnswers": ["Newton", "newton", "N"],
+      "explanation": "The SI unit of force is the Newton (N), named after Sir Isaac Newton."
+    },
+    {
+      "id": "PHY004",
+      "questionText": "Ohm's Law relates which three electrical quantities?",
+      "questionType": "multiple-choice",
+      "category": "Physics",
+      "points": 10,
+      "options": [
+        { "optionId": "A", "text": "Voltage, Current, Power" },
+        { "optionId": "B", "text": "Current, Resistance, Charge" },
+        { "optionId": "C", "text": "Voltage, Current, Resistance" },
+        { "optionId": "D", "text": "Power, Energy, Time" }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Ohm's Law states that V = IR (Voltage = Current × Resistance)."
+    },
+    {
+      "id": "PHY005",
+      "questionText": "Which of the following are forms of kinetic energy? (Select all that apply)",
+      "questionType": "multiple-choice-multiple-answer",
+      "category": "Physics",
+      "points": 15,
+      "options": [
+        { "optionId": "A", "text": "Thermal energy" },
+        { "optionId": "B", "text": "Chemical energy" },
+        { "optionId": "C", "text": "Mechanical wave energy (e.g., sound)" },
+        { "optionId": "D", "text": "Gravitational potential energy" }
+      ],
+      "correctAnswer": ["A", "C"],
+      "explanation": "Kinetic energy is the energy of motion. Thermal energy (movement of particles) and mechanical wave energy involve motion. Chemical and gravitational potential energy are forms of potential energy."
+    },
+    {
+      "id": "CHM001",
+      "questionText": "What is the chemical formula for water?",
+      "questionType": "multiple-choice",
+      "category": "Chemistry",
+      "points": 10,
+      "options": [
+        { "optionId": "A", "text": "CO2" },
+        { "optionId": "B", "text": "H2O" },
+        { "optionId": "C", "text": "O2" },
+        { "optionId": "D", "text": "NaCl" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Water is composed of two hydrogen atoms and one oxygen atom, hence H2O."
+    },
+    {
+      "id": "CHM002",
+      "questionText": "Noble gases are highly reactive.",
+      "questionType": "true-false",
+      "category": "Chemistry",
+      "points": 5,
+      "options": [
+        { "optionId": "A", "text": "True" },
+        { "optionId": "B", "text": "False" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Noble gases (like Helium, Neon, Argon) have a full valence electron shell, making them very stable and unreactive."
+    },
+    {
+      "id": "CHM003",
+      "questionText": "What is the pH of pure water at room temperature?",
+      "questionType": "short-answer",
+      "category": "Chemistry",
+      "points": 10,
+      "correctAnswer": "7",
+      "acceptableAnswers": ["7", "seven"],
+      "explanation": "Pure water is neutral, with a pH of 7. Values below 7 are acidic, and above 7 are alkaline (basic)."
+    },
+    {
+      "id": "CHM004",
+      "questionText": "What is the most abundant gas in Earth's atmosphere?",
+      "questionType": "multiple-choice",
+      "category": "Chemistry",
+      "points": 10,
+      "options": [
+        { "optionId": "A", "text": "Oxygen" },
+        { "optionId": "B", "text": "Carbon Dioxide" },
+        { "optionId": "C", "text": "Nitrogen" },
+        { "optionId": "D", "text": "Argon" }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Nitrogen makes up about 78% of Earth's atmosphere."
+    },
+    {
+      "id": "CHM005",
+      "questionText": "What is the chemical symbol for Sodium?",
+      "questionType": "multiple-choice",
+      "category": "Chemistry",
+      "points": 10,
+      "imageURL": "https://placehold.co/600x400/D1E7DD/31343C?text=Element+Symbol&font=Inter",
+      "options": [
+        { "optionId": "A", "text": "S" },
+        { "optionId": "B", "text": "So" },
+        { "optionId": "C", "text": "Na" },
+        { "optionId": "D", "text": "Sd" }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The chemical symbol for Sodium is Na, derived from its Latin name 'natrium'."
+    },
+    {
+      "id": "MTH001",
+      "questionText": "What is the approximate value of Pi (π) to two decimal places?",
+      "questionType": "multiple-choice",
+      "category": "Mathematics",
+      "points": 10,
+      "options": [
+        { "optionId": "A", "text": "3.12" },
+        { "optionId": "B", "text": "3.14" },
+        { "optionId": "C", "text": "3.16" },
+        { "optionId": "D", "text": "3.18" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pi (π) is an irrational number, approximately equal to 3.14159. To two decimal places, it is 3.14."
+    },
+    {
+      "id": "MTH002",
+      "questionText": "Zero (0) is considered a positive number.",
+      "questionType": "true-false",
+      "category": "Mathematics",
+      "points": 5,
+      "options": [
+        { "optionId": "A", "text": "True" },
+        { "optionId": "B", "text": "False" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Zero is neither positive nor negative. It is an integer that separates positive and negative numbers."
+    },
+    {
+      "id": "MTH003",
+      "questionText": "If a square has a side length of 5 units, what is its area in square units?",
+      "questionType": "short-answer",
+      "category": "Mathematics",
+      "points": 10,
+      "correctAnswer": "25",
+      "acceptableAnswers": ["25", "25 square units", "twenty-five"],
+      "explanation": "The area of a square is calculated by side length multiplied by side length (s*s). So, 5 * 5 = 25 square units."
+    },
+    {
+      "id": "MTH004",
+      "questionText": "What is the sum of the interior angles of a triangle?",
+      "questionType": "multiple-choice",
+      "category": "Mathematics",
+      "points": 10,
+      "options": [
+        { "optionId": "A", "text": "90 degrees" },
+        { "optionId": "B", "text": "180 degrees" },
+        { "optionId": "C", "text": "270 degrees" },
+        { "optionId": "D", "text": "360 degrees" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The sum of the interior angles of any triangle is always 180 degrees."
+    },
+    {
+      "id": "MTH005",
+      "questionText": "What is the value of 2 raised to the power of 5 (2^5)?",
+      "questionType": "short-answer",
+      "category": "Mathematics",
+      "points": 10,
+      "correctAnswer": "32",
+      "acceptableAnswers": ["32", "thirty-two"],
+      "explanation": "2^5 means 2 multiplied by itself 5 times: 2 * 2 * 2 * 2 * 2 = 32."
+    }
+  ]
+}
