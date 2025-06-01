@@ -1,9 +1,6 @@
 import {
-  TbAward,
-  TbCashRegister,
   TbChartBar,
   TbDashboard,
-  TbReportAnalytics,
 } from "react-icons/tb";
 
 export const navData = {

@@ -1,105 +1,149 @@
-import { useMemo, useState, useCallback } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { QuestionRenderer } from "./questions/question-renderer";
-import type { Question } from "@/schema";
+import { Flag, FlagOff, Image as ImageIcon } from "lucide-react";
+
+interface Question {
+  questionId: string;
+  questionText: string;
+  questionType: "multiple-choice";
+  category: string;
+  points: number;
+  options: Array<{ optionId: string; text: string }>;
+  correctAnswer: string;
+  explanation: string;
+  imageURL?: string;
+}
 
 interface QuestionCardProps {
   question: Question;
   questionNumber: number;
   totalQuestions: number;
-  onAnswer: (answer: string | string[]) => void;
-  onNext: () => void;
+  answer?: string;
+  onAnswer: (answer: string) => void;
+  isFlagged: boolean;
+  onFlag: () => void;
+  allowSkipping: boolean;
 }
 
 export function QuestionCard({
   question,
   questionNumber,
   totalQuestions,
+  answer,
   onAnswer,
-  onNext,
+  isFlagged,
+  onFlag,
+  allowSkipping,
 }: QuestionCardProps) {
-  const [currentAnswer, setCurrentAnswer] = useState<string | string[]>("");
-
-  // Memoize calculations
-  const progress = useMemo(
-    () => (questionNumber / totalQuestions) * 100,
-    [questionNumber, totalQuestions],
-  );
-
-  const isAnswered = useMemo(() => {
-    if (Array.isArray(currentAnswer)) {
-      return currentAnswer.length > 0;
-    }
-    return currentAnswer.length > 0;
-  }, [currentAnswer]);
-
-  // Use useCallback to prevent infinite re-renders
-  const handleAnswer = useCallback(
-    (answer: string | string[]) => {
-      setCurrentAnswer(answer);
-      onAnswer(answer);
-    },
-    [onAnswer],
-  );
-
-  const handleNext = () => {
-    onNext();
-    setCurrentAnswer(
-      question.questionType === "multiple-choice-multiple-answer" ? [] : "",
-    );
+  const handleRadioChange = (value: string) => {
+    onAnswer(value);
   };
 
-  // Reset answer when question changes
-  const resetAnswer = useCallback(() => {
-    setCurrentAnswer(
-      question.questionType === "multiple-choice-multiple-answer" ? [] : "",
-    );
-  }, [question.questionType]);
+  const isAnswered = answer !== undefined && answer !== "";
 
   return (
-    <Card className="mx-auto w-full max-w-2xl">
-      <CardHeader>
+    <Card className="w-full">
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-sm font-medium">
-              Question {questionNumber} of {totalQuestions}
-            </span>
+          <div className="flex items-center gap-3">
             <Badge variant="outline" className="text-xs">
+              Question {questionNumber} of {totalQuestions}
+            </Badge>
+            <Badge variant="secondary" className="text-xs">
               {question.category}
             </Badge>
+            <Badge variant="outline" className="text-xs">
+              {question.points} {question.points === 1 ? "point" : "points"}
+            </Badge>
+            {isAnswered && (
+              <Badge variant="default" className="text-xs bg-green-100 text-green-800">
+                Answered
+              </Badge>
+            )}
           </div>
-          <span className="text-sm font-medium">{question.points} points</span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onFlag}
+            className={`gap-2 ${
+              isFlagged
+                ? "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100"
+                : "hover:bg-gray-50"
+            }`}
+          >
+            {isFlagged ? (
+              <>
+                <Flag className="w-4 h-4 fill-current" />
+                Flagged
+              </>
+            ) : (
+              <>
+                <FlagOff className="w-4 h-4" />
+                Flag
+              </>
+            )}
+          </Button>
         </div>
-        <Progress value={progress} className="w-full" />
+        <CardTitle className="text-lg leading-relaxed">
+          {question.questionText}
+        </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <h2 className="text-xl leading-relaxed font-semibold">
-          {question.questionText}
-        </h2>
-
         {question.imageURL && (
-          <div className="bg-muted flex h-48 w-full items-center justify-center overflow-hidden rounded-lg">
-            <img
-              src={question.imageURL}
-              alt="Question image"
-              className="max-h-full max-w-full object-contain"
-            />
+          <div className="flex justify-center">
+            <div className="relative rounded-lg border overflow-hidden max-w-md">
+              <img
+                src={question.imageURL}
+                alt="Question illustration"
+                className="w-full h-auto"
+              />
+              <div className="absolute top-2 right-2 bg-black/20 rounded-full p-1">
+                <ImageIcon className="w-4 h-4 text-white" />
+              </div>
+            </div>
           </div>
         )}
 
-        <QuestionRenderer
-          question={question}
-          onAnswer={handleAnswer}
-          key={question.id} // Force re-mount when question changes
-        />
+        <div className="space-y-4">
+          <RadioGroup
+            value={answer || ""}
+            onValueChange={handleRadioChange}
+            className="space-y-3"
+          >
+            {question.options.map((option) => (
+              <div key={option.optionId} className="flex items-center space-x-3">
+                <RadioGroupItem
+                  value={option.optionId}
+                  id={option.optionId}
+                  className="mt-0.5"
+                />
+                <Label
+                  htmlFor={option.optionId}
+                  className="text-sm font-normal cursor-pointer flex-1 leading-relaxed py-2"
+                >
+                  <span className="font-medium mr-2 text-blue-600">
+                    {option.optionId}.
+                  </span>
+                  {option.text}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
 
-        <Button onClick={handleNext} disabled={!isAnswered} className="w-full">
-          {questionNumber === totalQuestions ? "Finish Quiz" : "Next Question"}
-        </Button>
+        {allowSkipping && !answer && (
+          <div className="pt-4 border-t">
+            <p className="text-sm text-muted-foreground">
+              You can skip this question and return to it later.
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

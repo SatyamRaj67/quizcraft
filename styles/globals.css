@@ -71,6 +71,21 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
+  
+  /* Quiz-specific color variables */
+  --quiz-current: oklch(0.646 0.222 252); /* Blue for current question */
+  --quiz-current-foreground: oklch(1 0 0);
+  --quiz-flagged: oklch(0.643 0.196 317.5); /* Purple for flagged questions */
+  --quiz-flagged-foreground: oklch(1 0 0);
+  --quiz-attempted: oklch(0.594 0.181 142.5); /* Green for attempted questions */
+  --quiz-attempted-foreground: oklch(1 0 0);
+  --quiz-skipped: oklch(0.627 0.201 29.2); /* Red for seen but not attempted */
+  --quiz-skipped-foreground: oklch(1 0 0);
+  --quiz-unattempted: oklch(0.708 0 0); /* Gray for unattempted */
+  --quiz-unattempted-foreground: oklch(0.985 0 0);
+  --quiz-success: oklch(0.594 0.181 142.5); /* Green for correct answers */
+  --quiz-error: oklch(0.627 0.201 29.2); /* Red for incorrect answers */
+  
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -103,8 +118,22 @@
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --chart-4: oklch(0.627 0.265 303.9);  --chart-5: oklch(0.645 0.246 16.439);
+  
+  /* Quiz-specific color variables for dark theme */
+  --quiz-current: oklch(0.646 0.222 252); /* Blue for current question */
+  --quiz-current-foreground: oklch(1 0 0);
+  --quiz-flagged: oklch(0.643 0.196 317.5); /* Purple for flagged questions */
+  --quiz-flagged-foreground: oklch(1 0 0);
+  --quiz-attempted: oklch(0.594 0.181 142.5); /* Green for attempted questions */
+  --quiz-attempted-foreground: oklch(1 0 0);
+  --quiz-skipped: oklch(0.627 0.201 29.2); /* Red for seen but not attempted */
+  --quiz-skipped-foreground: oklch(1 0 0);
+  --quiz-unattempted: oklch(0.708 0 0); /* Gray for unattempted */
+  --quiz-unattempted-foreground: oklch(0.985 0 0);
+  --quiz-success: oklch(0.594 0.181 142.5); /* Green for correct answers */
+  --quiz-error: oklch(0.627 0.201 29.2); /* Red for incorrect answers */
+  
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
