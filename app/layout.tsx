@@ -1,4 +1,5 @@
 import Header from "@/components/layout/header/header";
+import { ConvexClientProvider } from "@/components/layout/providers/convex-client-provider";
 import { ThemeProvider } from "@/components/layout/providers/theme-provider";
 import { AppSidebar } from "@/components/layout/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -32,16 +33,18 @@ export default async function RootLayout({
     <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <TRPCReactProvider>
-            <SidebarProvider defaultOpen={defaultOpen}>
-              <AppSidebar />
-              <SidebarInset>
-                <Header />
-                {children}
-              </SidebarInset>
-              <Toaster />
-            </SidebarProvider>
-          </TRPCReactProvider>
+          <ConvexClientProvider>
+            <TRPCReactProvider>
+              <SidebarProvider defaultOpen={defaultOpen}>
+                <AppSidebar />
+                <SidebarInset>
+                  <Header />
+                  {children}
+                </SidebarInset>
+                <Toaster />
+              </SidebarProvider>
+            </TRPCReactProvider>
+          </ConvexClientProvider>
         </ThemeProvider>
       </body>
     </html>
