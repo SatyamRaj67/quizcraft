@@ -1,12 +1,15 @@
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import providers from "./providers";
-import { getUserById, updateUserById } from "@/database/user";
-import {
-  deleteTwoFactorConfirmationByUserId,
-  getTwoFactorConfirmationByUserId,
-} from "@/database/two-factor-confirmation";
 import type { UserRole } from "@/types";
-import { getAccountByUserId } from "@/database/account";
+
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
+
+import { ConvexHttpClient } from "convex/browser";
+import { env } from "@/env";
+
+// Initialize a server-side client to interact with Convex
+const convex = new ConvexHttpClient(env.NEXT_PUBLIC_CONVEX_URL);
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -17,7 +20,7 @@ import { getAccountByUserId } from "@/database/account";
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
-      id: string;
+      id: Id<"users">;
       // ...other properties
       role: UserRole;
       isTwoFactorEnabled: boolean;
@@ -45,8 +48,11 @@ export const authConfig = {
   },
   events: {
     async linkAccount({ user }) {
-      await updateUserById(user.id!, {
-        emailVerified: new Date(),
+      await convex.mutation(api.user.updateUserById, {
+        id: user.id as Id<"users">,
+        data: {
+          emailVerified: new Date().getTime(),
+        },
       });
     },
   },
@@ -57,7 +63,9 @@ export const authConfig = {
 
       if (!user.id) return false;
 
-      const existingUser = await getUserById(user.id);
+      const existingUser = await convex.query(api.user.getUserById, {
+        id: user.id as Id<"users">,
+      });
 
       // Prevent sign in without email verification
       if (!existingUser?.emailVerified) {
@@ -65,21 +73,27 @@ export const authConfig = {
       }
 
       if (existingUser.isTwoFactorEnabled) {
-        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
-          existingUser.id,
+        const twoFactorConfirmation = await convex.query(
+          api.two_factor_confirmation.getTwoFactorConfirmationByUserId,
+          {
+            userId: existingUser._id,
+          },
         );
 
         if (!twoFactorConfirmation) return false;
 
         // Delete Two Factor Confirmation for Next SignIn
-        await deleteTwoFactorConfirmationByUserId(existingUser.id);
+        convex.mutation(
+          api.two_factor_confirmation.deleteTwoFactorConfirmationById, // Assuming you have a `deleteById` mutation
+          { id: twoFactorConfirmation._id },
+        );
       }
 
       return true;
     },
     session: ({ session, token }) => {
       if (token.sub && session.user) {
-        session.user.id = token.sub;
+        session.user.id = token.sub as Id<"users">;
       }
       if (token.role && session.user) {
         session.user.role = token.role as UserRole;
@@ -96,11 +110,19 @@ export const authConfig = {
     jwt: async ({ token, user, account }) => {
       if (!token.sub) return token;
 
-      const existingUser = await getUserById(token.sub);
+      // const existingUser = await getUserById(token.sub);
+      const existingUser = await convex.query(api.user.getUserById, {
+        id: token.sub as Id<"users">,
+      });
 
       if (!existingUser) return token;
 
-      const existingAccount = await getAccountByUserId(existingUser.id);
+      const existingAccount = await convex.query(
+        api.account.getAccountByUserId,
+        {
+          userId: existingUser._id,
+        },
+      );
 
       token.isOAuth = !!existingAccount;
       token.name = existingUser.name;

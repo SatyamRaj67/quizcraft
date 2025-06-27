@@ -1,55 +1,71 @@
 import { v4 as uuidv4 } from "uuid";
 import crypto from "crypto";
 
-import {
-  createVerificationToken,
-  deleteVerificationTokenById,
-  getVerificationTokenByEmail,
-} from "@/database/verification-token";
-import {
-  createTwoFactorToken,
-  deleteTwoFactorTokenById,
-  getTwoFactorTokenByEmail,
-} from "@/database/two-factor-token";
-import {
-  createPasswordResetToken,
-  deletePasswordResetTokenById,
-  getPasswordResetTokenByEmail,
-} from "@/database/password-reset-token";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export const generateTwoFactorToken = async (email: string) => {
   const token = crypto.randomInt(100_000, 1_000_000).toString();
   const expires = new Date(new Date().getTime() + 1000 * 60 * 60); // 1 hour
 
-  const existingToken = await getTwoFactorTokenByEmail(email);
+  const existingToken = useQuery(
+    api.two_factor_token.getTwoFactorTokenByEmail,
+    {
+      email,
+    },
+  );
 
   if (existingToken) {
-    await deleteTwoFactorTokenById(existingToken.id);
+    const deleteTwoFactorTokenById = useMutation(
+      api.two_factor_token.deleteTwoFactorTokenById,
+    );
+
+    await deleteTwoFactorTokenById({ id: existingToken._id });
   }
 
-  const twoFactorToken = await createTwoFactorToken({
+  const createTwoFactorToken = useMutation(
+    api.two_factor_token.createTwoFactorToken,
+  );
+
+  await createTwoFactorToken({
     email,
     token,
-    expires,
+    expires: expires.getTime(),
   });
 
-  return twoFactorToken;
+  return {
+    email,
+    token,
+    expires: expires.getTime(),
+  };
 };
 
 export const generatePasswordResetToken = async (email: string) => {
   const token = uuidv4();
   const expires = new Date(new Date().getTime() + 1000 * 60 * 60); // 1 hour
 
-  const existingToken = await getPasswordResetTokenByEmail(email);
+  const existingToken = useQuery(
+    api.password_reset_token.getPasswordResetTokenByEmail,
+    {
+      email,
+    },
+  );
 
   if (existingToken) {
-    await deletePasswordResetTokenById(existingToken.id);
+    const deletePasswordResetTokenById = useMutation(
+      api.password_reset_token.deletePasswordResetTokenById,
+    );
+
+    deletePasswordResetTokenById({ id: existingToken._id });
   }
 
+  const createPasswordResetToken = useMutation(
+    api.password_reset_token.createPasswordResetToken,
+  );
   const passwordResetToken = await createPasswordResetToken({
     email,
     token,
-    expires,
+    expires: expires.getTime(),
   });
 
   return passwordResetToken;
@@ -57,19 +73,35 @@ export const generatePasswordResetToken = async (email: string) => {
 
 export const generateVerificationToken = async (email: string) => {
   const token = uuidv4();
-  const expires = new Date(new Date().getTime() + 1000 * 60 * 60); // 1 hour
+  const expires = new Date(new Date().getTime() + 1000 * 60 * 60);
 
-  const existingToken = await getVerificationTokenByEmail(email);
+  const existingToken = useQuery(
+    api.verification_token.getVerificationTokenByEmail,
+    {
+      email,
+    },
+  );
 
   if (existingToken) {
-    await deleteVerificationTokenById(existingToken.id);
+    const deleteVerificationTokenById = useMutation(
+      api.verification_token.deleteVerificationTokenById,
+    );
+    await deleteVerificationTokenById({ id: existingToken._id });
   }
 
-  const verificationToken = await createVerificationToken({
+  const createVerificationToken = useMutation(
+    api.verification_token.createVerificationToken,
+  );
+
+  await createVerificationToken({
     email,
     token,
-    expires,
+    expires: expires.getTime(),
   });
 
-  return verificationToken;
+  return {
+    email,
+    token,
+    expires: expires.getTime(),
+  };
 };

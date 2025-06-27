@@ -15,6 +15,7 @@ export const env = createEnv({
     AUTH_GOOGLE_SECRET: z.string(),
     AUTH_GITHUB_ID: z.string(),
     AUTH_GITHUB_SECRET: z.string(),
+    CONVEX_DEPLOYMENT: z.string(),
     RESEND_API_KEY: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -29,6 +30,7 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
     NEXT_PUBLIC_API_URL: z.string().url().default("http://localhost:3000"),
+    NEXT_PUBLIC_CONVEX_URL: z.string().url().default("http://localhost:3000"),
   },
 
   /**
@@ -44,12 +46,15 @@ export const env = createEnv({
     AUTH_GITHUB_ID: process.env.AUTH_GITHUB_ID,
     AUTH_GITHUB_SECRET: process.env.AUTH_GITHUB_SECRET,
 
+    CONVEX_DEPLOYMENT: process.env.CONVEX_DEPLOYMENT,
+
     RESEND_API_KEY: process.env.RESEND_API_KEY,
 
     NODE_ENV: process.env.NODE_ENV,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

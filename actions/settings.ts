@@ -1,11 +1,13 @@
 "use server";
 
-import { getUserByEmail, getUserById, updateUserById } from "@/database/user";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { currentUser } from "@/lib/auth";
 import { sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
 import { SettingsSchema } from "@/schemas";
 import bcrypt from "bcryptjs";
+import { useMutation, useQuery } from "convex/react";
 import * as z from "zod";
 
 export const settings = async (values: z.infer<typeof SettingsSchema>) => {
@@ -15,7 +17,10 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     return { error: "Unauthorized" };
   }
 
-  const dbUser = await getUserById(user.id);
+  // const dbUser = await getUserById(user.id);
+  const dbUser = useQuery(api.user.getUserById, {
+    id: user.id,
+  });
 
   if (!dbUser) {
     return { error: "Unathorized" };
@@ -29,9 +34,11 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
   }
 
   if (values.email && values.email !== user.email) {
-    const existingUser = await getUserByEmail(values.email);
+    const existingUser = useQuery(api.user.getUserByEmail, {
+      email: values.email,
+    });
 
-    if (existingUser && existingUser.id !== user.id) {
+    if (existingUser && existingUser._id !== user.id) {
       return { error: "Email already in use!" };
     }
 
@@ -60,8 +67,12 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     values.newPassword = undefined;
   }
 
-  await updateUserById(user.id, {
-    ...values,
+  const updateUserById = useMutation(api.user.updateUserById);
+  await updateUserById({
+    id: user.id,
+    data: {
+      ...values,
+    },
   });
 
   return { success: "Settings Updated!" };

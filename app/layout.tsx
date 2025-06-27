@@ -1,9 +1,11 @@
+import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
 import { auth } from "@/server/auth";
 import "@/styles/globals.css";
 
 import { type Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { Geist } from "next/font/google";
+import { Toaster } from "sonner";
 
 import { TRPCReactProvider } from "trpc/react";
 
@@ -26,7 +28,11 @@ export default async function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body>
         <SessionProvider session={session}>
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <ConvexClientProvider>
+            <TRPCReactProvider>
+              {children} <Toaster />{" "}
+            </TRPCReactProvider>
+          </ConvexClientProvider>
         </SessionProvider>
       </body>
     </html>

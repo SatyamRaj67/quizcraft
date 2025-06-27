@@ -10,15 +10,9 @@ import {
   generateVerificationToken,
 } from "@/lib/tokens";
 import { sendTwoFactorEmail, sendVerificationEmail } from "@/lib/mail";
-import { getTwoFactorTokenByEmail } from "@/database/two-factor-token";
-import { getTwoFactorConfirmationByUserId } from "@/database/two-factor-confirmation";
-import { getUserByEmail } from "@/database/user";
-import {
-    createTwoFactorConfirmationByUserId,
-    deleteTwoFactorConfirmationById,
-} from "@/database/two-factor-confirmation";
-import { deleteTwoFactorTokenById } from "@/database/two-factor-token";
 import { signIn } from "@/server/auth";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export const login = async (
   values: z.infer<typeof LoginSchema>,
@@ -32,14 +26,16 @@ export const login = async (
 
   const { email, password, code } = validatedFields.data;
 
-  const exisitingUser = await getUserByEmail(email);
-  if (!exisitingUser || !exisitingUser.email || !exisitingUser.password) {
+  const existingUser = useQuery(api.user.getUserByEmail, {
+    email,
+  });
+  if (!existingUser || !existingUser.email || !existingUser.password) {
     return { error: "User does not exist!" };
   }
 
-  if (!exisitingUser.emailVerified) {
+  if (!existingUser.emailVerified) {
     const verificationToken = await generateVerificationToken(
-      exisitingUser.email,
+      existingUser.email,
     );
 
     await sendVerificationEmail(
@@ -50,10 +46,13 @@ export const login = async (
     return { success: "Confirmation Email Sent!" };
   }
 
-  if (exisitingUser.isTwoFactorEnabled && exisitingUser.email) {
+  if (existingUser.isTwoFactorEnabled && existingUser.email) {
     if (code) {
-      const twoFactorToken = await getTwoFactorTokenByEmail(
-        exisitingUser.email,
+      const twoFactorToken = useQuery(
+        api.two_factor_token.getTwoFactorTokenByEmail,
+        {
+          email: existingUser.email,
+        },
       );
 
       if (!twoFactorToken) {
@@ -70,19 +69,32 @@ export const login = async (
         return { error: "Code has expired!" };
       }
 
-      await deleteTwoFactorTokenById(twoFactorToken.id);
+      const deleteTwoFactorTokenById = useMutation(
+        api.two_factor_token.deleteTwoFactorTokenById,
+      );
 
-      const existingConfirmation = await getTwoFactorConfirmationByUserId(
-        exisitingUser.id,
+      deleteTwoFactorTokenById({ id: twoFactorToken._id });
+
+      const existingConfirmation = useQuery(
+        api.two_factor_confirmation.getTwoFactorConfirmationByUserId,
+        {
+          userId: existingUser._id,
+        },
       );
 
       if (existingConfirmation) {
-        await deleteTwoFactorConfirmationById(existingConfirmation.id);
+        const deleteTwoFactorConfirmationById = useMutation(
+          api.two_factor_confirmation.deleteTwoFactorConfirmationById,
+        );
+        deleteTwoFactorConfirmationById({ id: existingConfirmation._id });
       }
 
-      await createTwoFactorConfirmationByUserId(exisitingUser.id);
+      const createTwoFactorConfirmationByUserId = useMutation(
+        api.two_factor_confirmation.createTwoFactorConfirmationByUserId,
+      );
+      createTwoFactorConfirmationByUserId({ userId: existingUser._id });
     } else {
-      const twoFactorToken = await generateTwoFactorToken(exisitingUser.email);
+      const twoFactorToken = await generateTwoFactorToken(existingUser.email);
       await sendTwoFactorEmail(twoFactorToken.email, twoFactorToken.token);
 
       return { twoFactor: true };

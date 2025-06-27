@@ -5,9 +5,14 @@ import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 
 import { LoginSchema } from "@/schemas";
-import { getUserByEmail } from "@/database/user";
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "@/convex/_generated/api";
+import { env } from "@/env";
 
-export default{
+// Initialize a server-side client to interact with Convex
+const convex = new ConvexHttpClient(env.NEXT_PUBLIC_CONVEX_URL);
+
+export default {
   providers: [
     Google,
     GitHub,
@@ -18,13 +23,24 @@ export default{
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
 
-          const user = await getUserByEmail(email);
+          const user = await convex.query(api.user.getUserByEmail, {
+            email,
+          });
+
           if (!user || !user.password) return null;
 
           const passwordMatch = await bcrypt.compare(password, user.password);
 
           if (passwordMatch) {
-            return user;
+            return {
+              id: user._id,
+              name: user.name || "User",
+              email: user.email,
+              image: user.image || null,
+              role: user.role || "USER",
+              isTwoFactorEnabled: user.isTwoFactorEnabled || false,
+              isOAuth: false,
+            };
           }
 
           throw new Error("Invalid credentials");
