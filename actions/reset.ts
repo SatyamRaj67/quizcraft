@@ -4,8 +4,13 @@ import { api } from "@/convex/_generated/api";
 import { sendPasswordResetEmail } from "@/lib/mail";
 import { generatePasswordResetToken } from "@/lib/tokens";
 import { ResetSchema } from "@/schemas";
-import { useQuery } from "convex/react";
 import * as z from "zod";
+
+import { ConvexHttpClient } from "convex/browser";
+import { env } from "@/env";
+
+// Initialize a server-side client to interact with Convex
+const convex = new ConvexHttpClient(env.NEXT_PUBLIC_CONVEX_URL);
 
 export const reset = async (values: z.infer<typeof ResetSchema>) => {
   const validatedFields = ResetSchema.safeParse(values);
@@ -16,7 +21,7 @@ export const reset = async (values: z.infer<typeof ResetSchema>) => {
 
   const { email } = validatedFields.data;
 
-  const exisitingUser = useQuery(api.user.getUserByEmail, {
+  const exisitingUser = await convex.query(api.user.getUserByEmail, {
     email,
   });
 

@@ -6,8 +6,13 @@ import * as z from "zod";
 import { RegisterSchema } from "@/schemas";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
-import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+
+import { ConvexHttpClient } from "convex/browser";
+import { env } from "@/env";
+
+// Initialize a server-side client to interact with Convex
+const convex = new ConvexHttpClient(env.NEXT_PUBLIC_CONVEX_URL);
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values);
@@ -19,7 +24,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const { email, password, name } = validatedFields.data;
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const existingUser = useQuery(api.user.getUserByEmail, {
+  const existingUser = await convex.query(api.user.getUserByEmail, {
     email,
   });
 
@@ -27,8 +32,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: "User already exists!" };
   }
 
-  const createUser = useMutation(api.user.createUser);
-  await createUser({
+  await convex.mutation(api.user.createUser, {
     name,
     email,
     password: hashedPassword,

@@ -11,8 +11,13 @@ import {
 } from "@/lib/tokens";
 import { sendTwoFactorEmail, sendVerificationEmail } from "@/lib/mail";
 import { signIn } from "@/server/auth";
-import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+
+import { ConvexHttpClient } from "convex/browser";
+import { env } from "@/env";
+
+// Initialize the server-side client
+const convex = new ConvexHttpClient(env.NEXT_PUBLIC_CONVEX_URL!);
 
 export const login = async (
   values: z.infer<typeof LoginSchema>,
@@ -26,7 +31,7 @@ export const login = async (
 
   const { email, password, code } = validatedFields.data;
 
-  const existingUser = useQuery(api.user.getUserByEmail, {
+  const existingUser = await convex.query(api.user.getUserByEmail, {
     email,
   });
   if (!existingUser || !existingUser.email || !existingUser.password) {
@@ -48,7 +53,7 @@ export const login = async (
 
   if (existingUser.isTwoFactorEnabled && existingUser.email) {
     if (code) {
-      const twoFactorToken = useQuery(
+      const twoFactorToken = await convex.query(
         api.two_factor_token.getTwoFactorTokenByEmail,
         {
           email: existingUser.email,
@@ -69,13 +74,11 @@ export const login = async (
         return { error: "Code has expired!" };
       }
 
-      const deleteTwoFactorTokenById = useMutation(
-        api.two_factor_token.deleteTwoFactorTokenById,
-      );
+      await convex.mutation(api.two_factor_token.deleteTwoFactorTokenById, {
+        id: twoFactorToken._id,
+      });
 
-      deleteTwoFactorTokenById({ id: twoFactorToken._id });
-
-      const existingConfirmation = useQuery(
+      const existingConfirmation = await convex.query(
         api.two_factor_confirmation.getTwoFactorConfirmationByUserId,
         {
           userId: existingUser._id,
@@ -83,16 +86,16 @@ export const login = async (
       );
 
       if (existingConfirmation) {
-        const deleteTwoFactorConfirmationById = useMutation(
+        await convex.mutation(
           api.two_factor_confirmation.deleteTwoFactorConfirmationById,
+          { id: existingConfirmation._id },
         );
-        deleteTwoFactorConfirmationById({ id: existingConfirmation._id });
       }
 
-      const createTwoFactorConfirmationByUserId = useMutation(
+      await convex.mutation(
         api.two_factor_confirmation.createTwoFactorConfirmationByUserId,
+        { userId: existingUser._id },
       );
-      createTwoFactorConfirmationByUserId({ userId: existingUser._id });
     } else {
       const twoFactorToken = await generateTwoFactorToken(existingUser.email);
       await sendTwoFactorEmail(twoFactorToken.email, twoFactorToken.token);

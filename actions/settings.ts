@@ -7,8 +7,13 @@ import { sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
 import { SettingsSchema } from "@/schemas";
 import bcrypt from "bcryptjs";
-import { useMutation, useQuery } from "convex/react";
 import * as z from "zod";
+
+import { ConvexHttpClient } from "convex/browser";
+import { env } from "@/env";
+
+// Initialize a server-side client to interact with Convex
+const convex = new ConvexHttpClient(env.NEXT_PUBLIC_CONVEX_URL);
 
 export const settings = async (values: z.infer<typeof SettingsSchema>) => {
   const user = await currentUser();
@@ -18,7 +23,7 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
   }
 
   // const dbUser = await getUserById(user.id);
-  const dbUser = useQuery(api.user.getUserById, {
+  const dbUser = await convex.query(api.user.getUserById, {
     id: user.id,
   });
 
@@ -34,7 +39,7 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
   }
 
   if (values.email && values.email !== user.email) {
-    const existingUser = useQuery(api.user.getUserByEmail, {
+    const existingUser = await convex.query(api.user.getUserByEmail, {
       email: values.email,
     });
 
@@ -67,8 +72,7 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     values.newPassword = undefined;
   }
 
-  const updateUserById = useMutation(api.user.updateUserById);
-  await updateUserById({
+  await convex.mutation(api.user.updateUserById, {
     id: user.id,
     data: {
       ...values,

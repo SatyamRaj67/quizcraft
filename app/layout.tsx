@@ -30,7 +30,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <ConvexClientProvider>
             <TRPCReactProvider>
-              {children} <Toaster />{" "}
+              {children} <Toaster />
             </TRPCReactProvider>
           </ConvexClientProvider>
         </SessionProvider>
