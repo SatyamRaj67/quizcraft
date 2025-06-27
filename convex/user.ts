@@ -30,7 +30,7 @@ export const getUserById = query({
   args: { id: v.id("users") },
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.id);
-    
+
     return user;
   },
 });
@@ -43,10 +43,11 @@ export const updateUserById = mutation({
       email: v.optional(v.string()),
       password: v.optional(v.string()),
       emailVerified: v.optional(v.number()), // Use number for timestamps
+      role: v.optional(v.union(v.literal("USER"), v.literal("ADMIN"))),
+      isTwoFactorEnabled: v.optional(v.boolean()),
     }),
   },
   handler: async (ctx, args) => {
-    const user = await ctx.db.patch(args.id, args.data);
-    return user;
+    await ctx.db.patch(args.id, args.data);
   },
 });
