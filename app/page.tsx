@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LoginButton } from "@/components/auth/button/login-button";
-import PartyKitConnection from "@/components/party/partykit-connection";
 import { Zap, ChevronRight, Sparkles, Gamepad2 } from "lucide-react";
 import { features, stats } from "@/constants";
 
@@ -21,7 +20,6 @@ const orbitron = Orbitron({
 export default async function HomePage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <PartyKitConnection room="global-lobby" />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
