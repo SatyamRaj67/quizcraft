@@ -3,7 +3,6 @@ import { auth } from "@/server/auth";
 
 import { type Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
-import { Geist, Orbitron } from "next/font/google";
 
 import { TRPCReactProvider } from "trpc/react";
 import { ThemeProvider } from "@/components/layout/theme/theme-provider";
@@ -21,26 +20,12 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  variable: "--font-orbitron",
-});
-
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth();
   return (
-    <html
-      lang="en"
-      className={`${geist.variable} ${orbitron.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* {process.env.NODE_ENV === "development" && (
           <Script
