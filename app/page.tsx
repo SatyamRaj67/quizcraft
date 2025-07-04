@@ -5,6 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { LoginButton } from "@/components/auth/button/login-button";
 import { Zap, ChevronRight, Sparkles, Gamepad2 } from "lucide-react";
 import { features, stats } from "@/constants";
+import { Orbitron } from "next/font/google";
+
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+});
 
 export default async function HomePage() {
   return (
@@ -30,6 +37,7 @@ export default async function HomePage() {
             <h1
               className={cn(
                 "text-5xl font-bold text-white drop-shadow-2xl md:text-7xl lg:text-8xl",
+                orbitron.className,
               )}
             >
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
@@ -42,6 +50,7 @@ export default async function HomePage() {
             <p
               className={cn(
                 "mx-auto max-w-3xl text-xl leading-relaxed text-slate-300 md:text-2xl",
+                orbitron.className,
               )}
             >
               Crafting Knowledge, One Quiz at a Time.
@@ -101,7 +110,10 @@ export default async function HomePage() {
         <div className="container mx-auto px-4">
           <div className="mb-16 text-center">
             <h2
-              className={cn("mb-4 text-4xl font-bold text-white md:text-5xl")}
+              className={cn(
+                "mb-4 text-4xl font-bold text-white md:text-5xl",
+                orbitron.className,
+              )}
             >
               Why Choose QuizCraft?
             </h2>
@@ -139,7 +151,12 @@ export default async function HomePage() {
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 py-20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className={cn("mb-6 text-4xl font-bold text-white md:text-5xl")}>
+          <h2
+            className={cn(
+              "mb-6 text-4xl font-bold text-white md:text-5xl",
+              orbitron.className,
+            )}
+          >
             Ready to Start Your Journey?
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-xl text-slate-300">
