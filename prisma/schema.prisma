@@ -44,7 +44,7 @@ model UserPreferences {
   theme                 String  @default("default")
   enableTimer           Boolean @default(true)
   enableNegativeMarking Boolean @default(true)
-  preferredDifficulty   String  @default("MEDIUM")
+  preferredDifficulty   String
   instantAnswers        Boolean @default(false)
 
   userId String @unique
@@ -58,7 +58,7 @@ model Quiz {
   id          String  @id @default(cuid())
   title       String
   description String
-  difficulty  String  @default("MEDIUM")
+  difficulty  String
   isPublic    Boolean @default(true)
 
   // Relations
