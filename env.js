@@ -16,6 +16,7 @@ export const env = createEnv({
     AUTH_GITHUB_ID: z.string(),
     AUTH_GITHUB_SECRET: z.string(),
     DATABASE_URL: z.string(),
+    GEMINI_API_KEY: z.string(),
     RESEND_API_KEY: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -46,6 +47,8 @@ export const env = createEnv({
     AUTH_GITHUB_SECRET: process.env.AUTH_GITHUB_SECRET,
 
     DATABASE_URL: process.env.DATABASE_URL,
+
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
 
     RESEND_API_KEY: process.env.RESEND_API_KEY,
 

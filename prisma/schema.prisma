@@ -83,11 +83,11 @@ model Question {
   pointsIncorrect Int
 
   // MCQ specific fields
-  options         Json
+  options         Option[]
   correctOptionId String?
 
   // Numerical specific fields
-  correctAnswer Int
+  correctAnswer Float?
 
   // Relations
   quizId String
@@ -96,8 +96,21 @@ model Question {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([type])
   @@index([quizId])
   @@index([subject])
+}
+
+
+model Option {
+  id   String @id @default(cuid())
+  text String
+
+  // Relation to Question
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
 }
 
 model GameResult {

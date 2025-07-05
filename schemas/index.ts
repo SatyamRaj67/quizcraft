@@ -85,6 +85,26 @@ export const GameResultSchema = z.object({
   finalScores: z.array(z.object({ userId: z.string(), score: z.number() })),
 });
 
+// AI Generation Schema
+export const AIGenerationFormSchema = z.object({
+  topic: z.string().min(3, {
+    message: "Topic must be at least 3 characters long.",
+  }),
+  difficulty: z.enum(["easy", "medium", "hard"]),
+  questionCount: z.coerce.number().int().min(1).max(20),
+  questionTypes: z
+    .array(z.enum(["mcq", "numerical"]))
+    .min(1, "Please select at least one question type."),
+  subjects: z
+    .array(z.object({ label: z.string(), value: z.string() }))
+    .max(4, "You can select a maximum of 4 subjects.")
+    .optional(),
+  extraInstructions: z
+    .string()
+    .max(500, "Instructions cannot exceed 500 characters.")
+    .optional(),
+});
+
 // Authentication Schemas
 
 export const SettingsSchema = z
