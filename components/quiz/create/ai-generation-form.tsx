@@ -172,6 +172,7 @@ const AIGenerationForm = ({
                       {...field}
                       defaultOptions={SUBJECT_OPTIONS}
                       placeholder="Select up to 4 subjects..."
+                      creatable
                       maxSelected={4}
                       disabled={isGenerating}
                     />

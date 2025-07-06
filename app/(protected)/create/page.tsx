@@ -180,20 +180,6 @@ const CreatePage = () => {
               <Button type="submit" disabled={isPending || isGenerating}>
                 {isPending ? "Saving..." : "Save Quiz"}
               </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => {
-                  console.log("Current form values:", form.getValues());
-                  console.log("Form errors:", form.formState.errors);
-                  console.log(
-                    "Questions count:",
-                    form.getValues("questions").length,
-                  );
-                }}
-              >
-                Debug Form
-              </Button>
             </form>
           </Form>
         </FormProvider>
