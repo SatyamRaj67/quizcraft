@@ -41,7 +41,7 @@ const DashboardPage = async () => {
         </div>
         <div className="flex shrink-0 gap-2">
           <Button asChild>
-            <Link href="/quiz/create">
+            <Link href="/create">
               <FilePlus2 className="mr-2 h-4 w-4" /> Create Quiz
             </Link>
           </Button>

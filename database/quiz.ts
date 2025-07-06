@@ -1,11 +1,9 @@
-import { transformQuestion } from "@/lib/dbUtils";
-import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import type { Question, Quiz, QuizOption } from "@/types";
 
 export const getQuizById = async (quizId: string) => {
   try {
-    const dbQuiz = await db.quiz.findUnique({
+    const quiz = await db.quiz.findUnique({
       where: { id: quizId },
       include: {
         questions: {
@@ -14,16 +12,9 @@ export const getQuizById = async (quizId: string) => {
       },
     });
 
-    if (!dbQuiz) return null;
+    if (!quiz) return null;
 
-    const quiz: Quiz = {
-      id: dbQuiz.id,
-      title: dbQuiz.title,
-      description: dbQuiz.description,
-      questions: dbQuiz.questions.map(transformQuestion),
-    };
-
-    return quiz;
+    return quiz as Quiz;
   } catch (error) {
     console.error("Error fetching quiz by ID:", error);
     return null;

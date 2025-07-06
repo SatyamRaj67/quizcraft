@@ -1,30 +1,22 @@
 import { getQuizById } from "@/database/quiz";
 import { notFound } from "next/navigation";
-import { QuizPlayer } from "@/components/quiz/quiz-player";
-import { QuizSidebar } from "@/components/quiz/sidebar/quiz-sidebar";
+import { QuizPlayer } from "@/components/quiz/play/quiz-player";
+import { transformQuestion } from "@/lib/dbUtils";
+import type { Quiz } from "@/types";
 
-const QuizPlayPage = async ({
-  params,
-}: {
-  params: Promise<{
-    id: string;
-  }>;
-}) => {
-  const { id } = await params;
-  const quiz = await getQuizById(id);
+const QuizPlayPage = async ({ params }: { params: { id: string } }) => {
+  const quizData = await getQuizById(params.id);
 
-  if (!quiz) {
-    notFound();
+  if (!quizData) {
+    return notFound();
   }
 
-  return (
-    <div className="flex h-full w-full">
-      <main className="flex-1 p-4">
-        <QuizPlayer quiz={quiz} />
-      </main>
-      <QuizSidebar />
-    </div>
-  );
+  const quiz: Quiz = {
+    ...quizData,
+    questions: quizData.questions.map(transformQuestion),
+  };
+
+  return <QuizPlayer quiz={quiz} />;
 };
 
 export default QuizPlayPage;

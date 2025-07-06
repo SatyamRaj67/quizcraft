@@ -225,9 +225,7 @@ ${params.extraInstructions || "None"}
     if (!response.functionCalls || response.functionCalls.length === 0) {
       throw new Error("No function calls returned from AI");
     }
-
-    console.log("AI Response:", response.functionCalls[0]?.args);
-
+    
     const quizData = response.functionCalls[0]!.args as Record<string, any>;
 
     return quizData as Quiz;

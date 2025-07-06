@@ -47,7 +47,6 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authConfig = {
-  debug: process.env.NODE_ENV === "development",
   pages: {
     signIn: "/auth/signin",
     error: "/auth/error",

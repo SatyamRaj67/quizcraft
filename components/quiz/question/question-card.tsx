@@ -53,7 +53,7 @@ const QuestionCard = ({
               : "hsl(var(--secondary))",
         } as React.CSSProperties
       }
-      className="border-2"
+      className="border-2 w-full"
     >
       <CardHeader>
         <CardTitle>{question.text}</CardTitle>

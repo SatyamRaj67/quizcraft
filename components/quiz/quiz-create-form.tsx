@@ -71,8 +71,6 @@ export default function Home() {
   });
 
   const onSubmit = (data: QuizFormValues) => {
-    // In a real app, you would save this data to your backend or state management store
-    console.log("Form Submitted:", JSON.stringify(data, null, 2));
     alert("Quiz data saved! Check the console for the output.");
   };
 

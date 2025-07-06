@@ -39,7 +39,6 @@ const CreatePage = () => {
   });
 
   const onSubmit = (data: z.infer<typeof QuizSchema>) => {
-    console.log("Form submitted with data:", data);
     startTransition(async () => {
       await createQuizAction(data).then((res) => {
         if (res.error) {
@@ -85,8 +84,6 @@ const CreatePage = () => {
     try {
       const generatedQuiz = await generateQuizWithAI(params);
 
-      console.log("Generated quiz structure:", generatedQuiz);
-
       // Update form with generated data
       form.setValue("title", generatedQuiz.title || "Generated Quiz");
       form.setValue("description", generatedQuiz.description || "");
@@ -101,8 +98,6 @@ const CreatePage = () => {
       // Add generated questions one by one with proper structure
       if (generatedQuiz.questions && Array.isArray(generatedQuiz.questions)) {
         generatedQuiz.questions.forEach((question) => {
-          console.log("Adding question:", question);
-
           if (question.type === "mcq") {
             // Generate UUIDs for options and map correctOptionId
             const optionsWithUUIDs =
