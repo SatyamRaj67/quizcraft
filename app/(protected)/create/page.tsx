@@ -61,8 +61,8 @@ const CreatePage = () => {
         pointsCorrect: 5,
         pointsIncorrect: 0,
         options: [
-          { id: crypto.randomUUID(), text: "" },
-          { id: crypto.randomUUID(), text: "" },
+          { id: "0", text: "" },
+          { id: "1", text: "" },
         ],
         correctOptionId: "",
       });
@@ -84,7 +84,6 @@ const CreatePage = () => {
     try {
       const generatedQuiz = await generateQuizWithAI(params);
 
-      // Update form with generated data
       form.setValue("title", generatedQuiz.title || "Generated Quiz");
       form.setValue("description", generatedQuiz.description || "");
       form.setValue("difficulty", generatedQuiz.difficulty || "medium");
@@ -95,40 +94,48 @@ const CreatePage = () => {
         remove(i);
       }
 
-      // Add generated questions one by one with proper structure
+      // Add generated questions with proper IDs and default points
       if (generatedQuiz.questions && Array.isArray(generatedQuiz.questions)) {
-        generatedQuiz.questions.forEach((question) => {
+        generatedQuiz.questions.forEach((question: any) => {
           if (question.type === "mcq") {
-            // Generate UUIDs for options and map correctOptionId
+            // Generate proper IDs for options and map correctOptionIndex
             const optionsWithUUIDs =
-              question.options?.map((opt: QuizOption) => ({
-                id: crypto.randomUUID(),
+              question.options?.map((opt: any, index: number) => ({
+                id: String(index),
                 text: opt.text || "",
               })) || [];
 
-            let correctOptionUUID =
-              optionsWithUUIDs[Number(question.correctOptionId)]?.id || "";
+            // Use the correctOptionIndex from AI
+            const correctOptionId = String(question.correctOptionIndex || 0);
+
+            // Set default points based on difficulty
+            const defaultCorrectPoints = params.difficulty === "easy" ? 3 : params.difficulty === "medium" ? 5 : 8;
+            const defaultIncorrectPoints = params.difficulty === "easy" ? 0 : params.difficulty === "medium" ? 1 : 2;
 
             const formattedQuestion = {
-              id: question.id || crypto.randomUUID(),
+              id: crypto.randomUUID(),
               type: "mcq" as const,
               text: question.text,
               subject: question.subject || "General",
-              pointsCorrect: question.pointsCorrect || 5,
-              pointsIncorrect: question.pointsIncorrect || 0,
+              pointsCorrect: defaultCorrectPoints,
+              pointsIncorrect: defaultIncorrectPoints,
               options: optionsWithUUIDs,
-              correctOptionId: correctOptionUUID,
+              correctOptionId: correctOptionId,
             };
 
             append(formattedQuestion);
           } else if (question.type === "numerical") {
+            // Set default points based on difficulty
+            const defaultCorrectPoints = params.difficulty === "easy" ? 5 : params.difficulty === "medium" ? 8 : 10;
+            const defaultIncorrectPoints = params.difficulty === "easy" ? 0 : params.difficulty === "medium" ? 1 : 3;
+
             const formattedQuestion = {
-              id: question.id || crypto.randomUUID(),
+              id: crypto.randomUUID(),
               type: "numerical" as const,
               text: question.text,
               subject: question.subject || "General",
-              pointsCorrect: question.pointsCorrect || 10,
-              pointsIncorrect: question.pointsIncorrect || 0,
+              pointsCorrect: defaultCorrectPoints,
+              pointsIncorrect: defaultIncorrectPoints,
               correctAnswer: question.correctAnswer || 0,
             };
 
@@ -138,7 +145,7 @@ const CreatePage = () => {
       }
 
       toast.success(
-        `Generated ${generatedQuiz.questions?.length || 0} questions!`,
+        `Generated ${generatedQuiz.questions?.length || 0} questions! You can now adjust points for each question.`,
       );
     } catch (error) {
       console.error("AI generation error:", error);
@@ -174,6 +181,13 @@ const CreatePage = () => {
 
               <Button type="submit" disabled={isPending || isGenerating}>
                 {isPending ? "Saving..." : "Save Quiz"}
+              </Button>
+              <Button
+                type="button"
+                onClick={() => console.log("Form values:", form.getValues())}
+                disabled={isPending || isGenerating}
+              >
+                Debug Form Values
               </Button>
             </form>
           </Form>

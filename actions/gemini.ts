@@ -30,7 +30,6 @@ export async function generateQuizWithAI(
     parameters: {
       type: Type.OBJECT,
       properties: {
-        id: { type: Type.STRING },
         title: { type: Type.STRING, description: "The title of the quiz" },
         description: {
           type: Type.STRING,
@@ -46,7 +45,6 @@ export async function generateQuizWithAI(
           items: {
             type: Type.OBJECT,
             properties: {
-              id: { type: Type.STRING, description: "Unique question ID" },
               type: {
                 type: Type.STRING,
                 enum: ["mcq", "numerical"],
@@ -57,32 +55,21 @@ export async function generateQuizWithAI(
                 description: "Subject category of the question",
               },
               text: { type: Type.STRING, description: "Question text" },
-              pointsCorrect: {
-                type: Type.INTEGER,
-                description:
-                  "Points awarded for a correct answer (1-10 based on difficulty)",
-              },
-              pointsIncorrect: {
-                type: Type.INTEGER,
-                description:
-                  "Points deducted for an incorrect answer (0-5 based on difficulty)",
-              },
               options: {
                 type: Type.ARRAY,
                 items: {
                   type: Type.OBJECT,
                   properties: {
-                    id: { type: Type.STRING, description: "Option ID" },
                     text: { type: Type.STRING, description: "Option text" },
                   },
                 },
                 description:
                   "List of options for MCQ questions (not applicable for numerical questions)",
               },
-              correctOptionId: {
+              correctOptionIndex: {
                 type: Type.NUMBER,
                 description:
-                  "ID of the correct option (only for MCQ questions)",
+                  "Index of the correct option (0, 1, 2, 3) for MCQ questions",
               },
               correctAnswer: {
                 type: Type.NUMBER,
@@ -90,25 +77,17 @@ export async function generateQuizWithAI(
                   "Correct numerical answer (only for numerical questions)",
               },
             },
-            required: [
-              "id",
-              "type",
-              "subject",
-              "text",
-              "pointsCorrect",
-              "pointsIncorrect",
-            ],
+            required: ["type", "subject", "text"],
           },
           description:
             "List of questions in the quiz, each with its own properties",
         },
       },
-      required: ["id", "title", "description", "difficulty", "questions"],
+      required: ["title", "description", "difficulty", "questions"],
     },
     responseJsonSchema: {
       type: Type.OBJECT,
       properties: {
-        id: { type: Type.STRING, description: "Unique quiz ID" },
         title: { type: Type.STRING, description: "Title of the quiz" },
         description: { type: Type.STRING, description: "Brief description" },
         difficulty: {
@@ -121,7 +100,6 @@ export async function generateQuizWithAI(
           items: {
             type: Type.OBJECT,
             properties: {
-              id: { type: Type.STRING, description: "Unique question ID" },
               type: {
                 type: Type.STRING,
                 enum: ["mcq", "numerical"],
@@ -132,32 +110,21 @@ export async function generateQuizWithAI(
                 description: "Subject category of the question",
               },
               text: { type: Type.STRING, description: "Question text" },
-              pointsCorrect: {
-                type: Type.INTEGER,
-                description:
-                  "Points awarded for a correct answer (1-10 based on difficulty)",
-              },
-              pointsIncorrect: {
-                type: Type.INTEGER,
-                description:
-                  "Points deducted for an incorrect answer (0-5 based on difficulty)",
-              },
               options: {
                 type: Type.ARRAY,
                 items: {
                   type: Type.OBJECT,
                   properties: {
-                    id: { type: Type.STRING, description: "Option ID" },
                     text: { type: Type.STRING, description: "Option text" },
                   },
                 },
                 description:
                   "List of options for MCQ questions (not applicable for numerical questions)",
               },
-              correctOptionId: {
+              correctOptionIndex: {
                 type: Type.NUMBER,
                 description:
-                  "ID of the correct option (only for MCQ questions)",
+                  "Index of the correct option (0, 1, 2, 3) for MCQ questions",
               },
               correctAnswer: {
                 type: Type.NUMBER,
@@ -165,20 +132,13 @@ export async function generateQuizWithAI(
                   "Correct numerical answer (only for numerical questions)",
               },
             },
-            required: [
-              "id",
-              "type",
-              "subject",
-              "text",
-              "pointsCorrect",
-              "pointsIncorrect",
-            ],
+            required: ["type", "subject", "text"],
           },
           description:
             "List of questions in the quiz, each with its own properties",
         },
       },
-      required: ["id", "title", "description", "difficulty", "questions"],
+      required: ["title", "description", "difficulty", "questions"],
     },
   };
 
@@ -193,11 +153,9 @@ For each question, provide:
 1. A clear, well-formed question text
 2. Subject category
 3. Question type (mcq or numerical)
-4. For MCQ: 4 options with one correct answer
-5. For MCQ: correctOptionId should be the index (0, 1, 2, or 3) of the correct option
+4. For MCQ: exactly 4 options with clear text
+5. For MCQ: correctOptionIndex should be the index (0, 1, 2, or 3) of the correct option
 6. For Numerical: the correct numerical answer
-7. Points for correct answer (1-10 based on difficulty)
-8. Points for incorrect answer (penalty, 0-5 based on difficulty)
 
 Special Instructions:
 ${params.extraInstructions || "None"}
@@ -225,7 +183,7 @@ ${params.extraInstructions || "None"}
     if (!response.functionCalls || response.functionCalls.length === 0) {
       throw new Error("No function calls returned from AI");
     }
-    
+
     const quizData = response.functionCalls[0]!.args as Record<string, any>;
 
     return quizData as Quiz;

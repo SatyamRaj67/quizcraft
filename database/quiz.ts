@@ -1,9 +1,10 @@
+import { transformQuestion } from "@/lib/dbUtils";
 import { db } from "@/server/db";
 import type { Question, Quiz, QuizOption } from "@/types";
 
 export const getQuizById = async (quizId: string) => {
   try {
-    const quiz = await db.quiz.findUnique({
+    const quizData = await db.quiz.findUnique({
       where: { id: quizId },
       include: {
         questions: {
@@ -12,9 +13,15 @@ export const getQuizById = async (quizId: string) => {
       },
     });
 
-    if (!quiz) return null;
+    if (!quizData) {
+      return null;
+    }
 
-    return quiz as Quiz;
+    const quiz: Quiz = {
+      ...quizData,
+      questions: quizData!.questions.map(transformQuestion),
+    };
+    return quiz;
   } catch (error) {
     console.error("Error fetching quiz by ID:", error);
     return null;
@@ -68,43 +75,46 @@ export const getQuizzesByCreatorId = async (creatorId: string) => {
 };
 
 export const createQuiz = async (quizData: Quiz, creatorId: string) => {
-  const { id, title, description, difficulty, questions } = quizData;
+  const { title, description, difficulty, questions } = quizData;
 
   try {
     const newQuiz = await db.quiz.create({
       data: {
-        id,
         title,
         description: description ?? "",
         difficulty: difficulty ?? "medium",
         creatorId: creatorId,
         questions: {
-          create: questions.map((q: Question) => {
-            const questionPayload: any = {
-              id: q.id,
-              type: q.type,
-              text: q.text,
-              subject: q.subject,
-              pointsCorrect: q.pointsCorrect,
-              pointsIncorrect: q.pointsIncorrect,
-            };
-
-            if (q.type === "numerical") {
-              questionPayload.correctAnswer = q.correctAnswer;
-            } else if (q.type === "mcq") {
-              questionPayload.correctOptionId = q.correctOptionId;
-              questionPayload.options = {
-                create: q.options.map((opt: QuizOption) => ({
-                  id: opt.id,
-                  text: opt.text,
-                })),
-              };
-            }
-            return questionPayload;
-          }),
+          create: questions.map((question) => ({
+            type: question.type,
+            text: question.text,
+            subject: question.subject,
+            pointsCorrect: question.pointsCorrect,
+            pointsIncorrect: question.pointsIncorrect,
+            correctAnswer:
+              question.type === "numerical" ? question.correctAnswer : null,
+            correctOptionId:
+              question.type === "mcq" ? question.correctOptionId : null,
+            options:
+              question.type === "mcq" && question.options
+                ? {
+                    create: question.options.map((option) => ({
+                      text: option.text,
+                    })),
+                  }
+                : undefined,
+          })),
+        },
+      },
+      include: {
+        questions: {
+          include: {
+            options: true,
+          },
         },
       },
     });
+
     return newQuiz;
   } catch (error) {
     console.error("Error creating quiz in database:", error);

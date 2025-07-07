@@ -146,7 +146,7 @@ const QuestionCreateCard = ({
               variant="secondary"
               size="sm"
               onClick={() =>
-                appendOption({ id: crypto.randomUUID(), text: "" })
+                appendOption({ id: optionFields.length.toString(), text: "" })
               }
             >
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -166,7 +166,7 @@ const QuestionCreateCard = ({
                     </FormControl>
                     <SelectContent>
                       {optionFields.map((opt, i) => (
-                        <SelectItem key={opt.id} value={opt.id}>
+                        <SelectItem key={opt.id} value={String(i)}>
                           Option {i + 1}
                         </SelectItem>
                       ))}
@@ -198,6 +198,47 @@ const QuestionCreateCard = ({
             )}
           />
         )}
+
+        <div className="grid grid-cols-2 gap-4 md:col-span-2">
+          <FormField
+            control={control}
+            name={`questions.${questionIndex}.pointsCorrect`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Points for Correct Answer</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="20"
+                    {...field}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name={`questions.${questionIndex}.pointsIncorrect`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Points Deducted for Incorrect Answer</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="10"
+                    {...field}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import { QuizSidebar } from "@/components/quiz/sidebar/quiz-sidebar";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useEffect } from "react";
 

@@ -22,12 +22,13 @@ import QuestionCreateCard from "./question-create-card";
 import { useFormContext } from "react-hook-form";
 import type { z } from "zod";
 import type { QuizSchema } from "@/schemas";
+import type { Question } from "@/types";
 
 interface ManualQuizFormProps {
   isPending: boolean;
   onAddQuestion: (type: "mcq" | "numerical") => void;
-  questions: any[]; // Add this prop
-  onRemoveQuestion: (index: number) => void; // Add this prop
+  questions: Question[];
+  onRemoveQuestion: (index: number) => void;
 }
 
 const ManualQuizForm = ({
