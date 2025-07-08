@@ -16,7 +16,6 @@ import {
 import { toast } from "sonner";
 import AIGenerationForm from "@/components/quiz/create/ai-generation-form";
 import ManualQuizForm from "@/components/quiz/create/manual-quiz-form";
-import type { QuizOption } from "@/types";
 
 const CreatePage = () => {
   const [isPending, startTransition] = useTransition();
@@ -61,8 +60,8 @@ const CreatePage = () => {
         pointsCorrect: 5,
         pointsIncorrect: 0,
         options: [
-          { id: "0", text: "" },
-          { id: "1", text: "" },
+          { id: crypto.randomUUID(), text: "" },
+          { id: crypto.randomUUID(), text: "" },
         ],
         correctOptionId: "",
       });
@@ -84,68 +83,24 @@ const CreatePage = () => {
     try {
       const generatedQuiz = await generateQuizWithAI(params);
 
-      form.setValue("title", generatedQuiz.title || "Generated Quiz");
+      // Set basic quiz properties
+      form.setValue("title", generatedQuiz.title);
       form.setValue("description", generatedQuiz.description || "");
       form.setValue("difficulty", generatedQuiz.difficulty || "medium");
 
-      // Clear existing questions first
+      // Clear existing questions and add generated ones
       const currentQuestions = form.getValues("questions");
       for (let i = currentQuestions.length - 1; i >= 0; i--) {
         remove(i);
       }
 
-      // Add generated questions with proper IDs and default points
-      if (generatedQuiz.questions && Array.isArray(generatedQuiz.questions)) {
-        generatedQuiz.questions.forEach((question: any) => {
-          if (question.type === "mcq") {
-            // Generate proper IDs for options and map correctOptionIndex
-            const optionsWithUUIDs =
-              question.options?.map((opt: any, index: number) => ({
-                id: String(index),
-                text: opt.text || "",
-              })) || [];
-
-            // Use the correctOptionIndex from AI
-            const correctOptionId = String(question.correctOptionIndex || 0);
-
-            // Set default points based on difficulty
-            const defaultCorrectPoints = params.difficulty === "easy" ? 3 : params.difficulty === "medium" ? 5 : 8;
-            const defaultIncorrectPoints = params.difficulty === "easy" ? 0 : params.difficulty === "medium" ? 1 : 2;
-
-            const formattedQuestion = {
-              id: crypto.randomUUID(),
-              type: "mcq" as const,
-              text: question.text,
-              subject: question.subject || "General",
-              pointsCorrect: defaultCorrectPoints,
-              pointsIncorrect: defaultIncorrectPoints,
-              options: optionsWithUUIDs,
-              correctOptionId: correctOptionId,
-            };
-
-            append(formattedQuestion);
-          } else if (question.type === "numerical") {
-            // Set default points based on difficulty
-            const defaultCorrectPoints = params.difficulty === "easy" ? 5 : params.difficulty === "medium" ? 8 : 10;
-            const defaultIncorrectPoints = params.difficulty === "easy" ? 0 : params.difficulty === "medium" ? 1 : 3;
-
-            const formattedQuestion = {
-              id: crypto.randomUUID(),
-              type: "numerical" as const,
-              text: question.text,
-              subject: question.subject || "General",
-              pointsCorrect: defaultCorrectPoints,
-              pointsIncorrect: defaultIncorrectPoints,
-              correctAnswer: question.correctAnswer || 0,
-            };
-
-            append(formattedQuestion);
-          }
-        });
-      }
+      // Add all generated questions at once
+      generatedQuiz.questions.forEach((question) => {
+        append(question);
+      });
 
       toast.success(
-        `Generated ${generatedQuiz.questions?.length || 0} questions! You can now adjust points for each question.`,
+        `Generated ${generatedQuiz.questions.length} questions successfully!`,
       );
     } catch (error) {
       console.error("AI generation error:", error);

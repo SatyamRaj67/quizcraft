@@ -1,6 +1,6 @@
 "use client";
 
-import { useFieldArray, useFormContext, Controller } from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import type { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -146,7 +146,7 @@ const QuestionCreateCard = ({
               variant="secondary"
               size="sm"
               onClick={() =>
-                appendOption({ id: optionFields.length.toString(), text: "" })
+                appendOption({ id: crypto.randomUUID(), text: "" })
               }
             >
               <PlusCircle className="mr-2 h-4 w-4" />

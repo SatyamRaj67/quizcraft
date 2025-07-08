@@ -9,7 +9,7 @@ export function transformQuestion(q: any): Question {
     pointsIncorrect: q.pointsIncorrect,
   };
 
-  if (q.type === "MCQ") {
+  if (q.type === "mcq") {
     return {
       ...baseQuestion,
       type: "mcq" as const,
@@ -17,7 +17,7 @@ export function transformQuestion(q: any): Question {
       correctOptionId: q.correctOptionId!,
     };
   }
-  
+
   return {
     ...baseQuestion,
     type: "numerical" as const,
@@ -25,4 +25,3 @@ export function transformQuestion(q: any): Question {
     tolerance: q.tolerance || undefined,
   };
 }
-

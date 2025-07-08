@@ -24,7 +24,7 @@ export const QuizCard = ({ quiz }: QuizCardProps) => {
 
   return (
     <Link
-      href={`/quiz/${quiz.id}/preview`}
+      href={`/quiz/${quiz.id}/prepare`}
       className="bg-card border-border group block overflow-hidden rounded-lg border shadow-sm transition-shadow duration-300 ease-in-out hover:shadow-md"
     >
       <div className="p-6">

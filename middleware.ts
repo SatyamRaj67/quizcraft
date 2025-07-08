@@ -6,9 +6,7 @@ import {
   authRoutes,
   publicRoutes,
   DEFAULT_LOGIN_REDIRECT,
-  NotSidebarRoutes,
 } from "@/routes";
-import { cookies } from "next/headers";
 
 const { auth } = NextAuth(authConfig);
 
@@ -19,7 +17,6 @@ export default auth(async (req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-  const isNotSidebarRoute = NotSidebarRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) {
     return;

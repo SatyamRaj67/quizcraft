@@ -1,6 +1,6 @@
 import { transformQuestion } from "@/lib/dbUtils";
 import { db } from "@/server/db";
-import type { Question, Quiz, QuizOption } from "@/types";
+import type { Quiz } from "@/types";
 
 export const getQuizById = async (quizId: string) => {
   try {
@@ -9,6 +9,9 @@ export const getQuizById = async (quizId: string) => {
       include: {
         questions: {
           orderBy: { createdAt: "asc" },
+          include: {
+            options: true,
+          },
         },
       },
     });

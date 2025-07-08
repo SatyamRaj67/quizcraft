@@ -16,7 +16,7 @@ const ProtectedLayout = async ({ children }: ProtectedLayoutProps) => {
         <AppSidebar variant="inset" />
         <SidebarInset>
           <Header />
-          <div className="bg-background flex min-h-[90vh] w-full flex-col items-center justify-center gap-y-10">
+          <div className="bg-background flex w-full flex-col items-center justify-center">
             {children}
           </div>
         </SidebarInset>

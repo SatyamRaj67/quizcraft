@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, HelpCircle, Layers } from "lucide-react";
 import { QuizStartCard } from "@/components/quiz/quiz-start-card";
 
-const QuizPreviewPage = async ({
+const QuizPreparePage = async ({
   params,
 }: {
   params: Promise<{
@@ -59,4 +59,4 @@ const QuizPreviewPage = async ({
   );
 };
 
-export default QuizPreviewPage;
+export default QuizPreparePage;

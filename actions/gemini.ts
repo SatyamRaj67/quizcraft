@@ -1,6 +1,6 @@
 "use server";
 
-import type { Quiz } from "@/types";
+import type { Quiz, QuizOption } from "@/types";
 import {
   FunctionCallingConfigMode,
   GoogleGenAI,
@@ -13,9 +13,9 @@ const genAI = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
 export interface QuizGenerationParams {
   topic: string;
-  difficulty: "easy" | "medium" | "hard";
+  difficulty: string;
   questionCount: number;
-  questionTypes: ("mcq" | "numerical")[];
+  questionTypes: string[];
   subjects?: string[];
   extraInstructions?: string;
 }
@@ -186,7 +186,58 @@ ${params.extraInstructions || "None"}
 
     const quizData = response.functionCalls[0]!.args as Record<string, any>;
 
-    return quizData as Quiz;
+    const transformedQuiz: Quiz = {
+      id: crypto.randomUUID(),
+      title: quizData.title || "Generated Quiz",
+      description: quizData.description || "",
+      difficulty: quizData.difficulty || "medium",
+      questions:
+        quizData.questions.map((q: any) => {
+          const BaseQuestion = {
+            id: crypto.randomUUID(),
+            subject: q.subject,
+            text: q.text,
+            type: q.type,
+            pointsCorrect:
+              params.difficulty === "easy"
+                ? 3
+                : params.difficulty === "medium"
+                  ? 4
+                  : 4,
+            pointsIncorrect:
+              params.difficulty === "easy"
+                ? 0
+                : params.difficulty === "medium"
+                  ? 1
+                  : 2,
+          };
+
+          if (q.type === "mcq") {
+            const optionWithIds =
+              q.options.map((opt: QuizOption, index: number) => ({
+                id: String(index),
+                text: opt.text || "",
+              })) || [];
+
+            return {
+              ...BaseQuestion,
+              type: "mcq" as const,
+              options: optionWithIds,
+              correctOptionId: String(q.correctOptionIndex || 0),
+            };
+          } else if (q.type === "numerical") {
+            return {
+              ...BaseQuestion,
+              type: "numerical" as const,
+              correctAnswer: q.correctAnswer || 0,
+            };
+          }
+
+          return BaseQuestion;
+        }) || [],
+    };
+
+    return transformedQuiz;
   } catch (error) {
     console.error("Error generating quiz with AI:", error);
     throw new Error("Failed to generate quiz. Please try again.");
